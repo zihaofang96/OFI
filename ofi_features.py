@@ -30,6 +30,7 @@ class OFICalculator:
         self._pca_w: Dict[Symbol, np.ndarray] = {}
 
     # ---------------------------------------------------------------------
+
     def _roll_window(self, sym: Symbol, ts: Timestamp) -> None:
         """Locate time window that encloses *ts*."""
         if sym not in self._win_end:
@@ -43,6 +44,7 @@ class OFICalculator:
             self._accum[sym][...] = 0.0  # reset
 
     # ---------------------------------------------------------------------
+
     def ingest_row(self, row: pd.Series) -> None:
         """Process a single post‑event LOB row."""
         ts = pd.to_datetime(row["ts_event"])
@@ -82,6 +84,7 @@ class OFICalculator:
         self._snap[sym] = (bid_px, ask_px, bid_sz, ask_sz)
 
     # ---------------------------------------------------------------------
+
     def finalize_interval(self, *, horizon_end: Timestamp) -> None:
         """Re‑estimate PCA weights on the buffer up to *horizon_end*."""
         if not self._pca_buf:
@@ -111,6 +114,7 @@ class OFICalculator:
             self._pca_w[sym] = w
 
     # ---------------------------------------------------------------------
+    
     def get_features(self, symbol: Symbol, timestamp: Timestamp) -> Dict[str, Union[float, np.ndarray]]:
         """Return OFI features aggregated over (t‑h, t] with *t = timestamp*."""
         if symbol not in self._accum:
@@ -134,6 +138,8 @@ class OFICalculator:
             "cross_asset_ofi": float(cross),
         }
 
+# ---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 
 def compute_features_for_timestamp(
     book_df: pd.DataFrame,
@@ -154,7 +160,8 @@ def compute_features_for_timestamp(
     calc.finalize_interval(horizon_end=ts)
     return calc.get_features(symbol, ts)
 
-
+# ---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 
 if __name__ == "__main__":
     import argparse, textwrap, json
